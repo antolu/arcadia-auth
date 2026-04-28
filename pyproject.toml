@@ -1,8 +1,9 @@
 [project]
 dependencies = [
-  "matplotlib >= 3.6",
-  "numpy >= 1.26, < 2.0",
-  "pandas >= 2.0, < 3.0",
+  "authlib >= 1.3",
+  "httpx >= 0.27",
+  "pydantic-settings >= 2.0",
+  "cryptography >= 40",
 ]
 name = "arcadia-auth"
 dynamic = ["version", "readme"]
@@ -10,17 +11,13 @@ description = "Authetication pipeline for Arcadia server apps"
 license = { text = "Other/Proprietary License" }
 classifiers = [
   "Development Status :: 3 - Alpha",
-  "Intended Audience :: Science/Research",
+  "Intended Audience :: Developers",
   "License :: Other/Proprietary License",
   "Natural Language :: English",
-  "Operating System :: POSIX :: Linux",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
-  "Programming Language :: Python :: 3.14",
-  "Topic :: Scientific/Engineering :: Artificial Intelligence",
-  "Topic :: Scientific/Engineering :: Physics",
 ]
 requires-python = "~=3.11"
 
@@ -35,8 +32,14 @@ repository = "https://github.com/antolu/arcadia-auth"
 changelog = "https://github.com/antolu/arcadia-auth/releases"
 
 [project.optional-dependencies]
-test = ["pytest", "pytest-cov"]
-doc = ["acc-py-sphinx", "myst-parser", "sphinx-copybutton"]
+test = [
+  "pytest >= 8.0",
+  "pytest-asyncio >= 0.23",
+  "pytest-cov",
+  "respx >= 0.21",
+  "cryptography >= 40",
+  "PyJWT >= 2.8",
+]
 dev = ["pre-commit", "ruff", "mypy"]
 
 [build-system]
@@ -126,10 +129,7 @@ select = [
   "PLW", # warning  (pylint)
   "PLR", # refactor  (pylint)
   # "D",  # docstring (pydocstyle),  # not enabled by default
-  "PD",     # pandas
   "TRY",    # tryceratops
-  "NPY",    # numpy
-  "NPY201", # numpy 2.0
   "PERF",   # perflint
   "RUF",    # ruff
   # v flake8 v
@@ -161,10 +161,9 @@ preview = true
 
 [tool.mypy]
 disallow_untyped_defs = true
-plugins = "numpy.typing.mypy_plugin"
 
 [[tool.mypy.overrides]]
-module = ["matplotlib.*"]
+module = ["authlib.*"]
 ignore_missing_imports = true
 
 # for pyright LSP
