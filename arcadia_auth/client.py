@@ -42,9 +42,11 @@ class OidcClient:
             try:
                 resp = await client.get(url)
             except httpx.HTTPError as exc:
-                raise DiscoveryError(f"Could not reach discovery endpoint: {exc}") from exc
+                msg = f"Could not reach discovery endpoint: {exc}"
+                raise DiscoveryError(msg) from exc
             if resp.status_code != 200:  # noqa: PLR2004
-                raise DiscoveryError(f"Discovery returned {resp.status_code}")
+                msg = f"Discovery returned {resp.status_code}"
+                raise DiscoveryError(msg)
             data = resp.json()
         self._endpoints = {
             "authorization_endpoint": data["authorization_endpoint"],
@@ -54,11 +56,14 @@ class OidcClient:
         }
 
     def _internal(self, url: str) -> str:
-        return url.replace(self._settings.oidc_public_base_url, self._settings.oidc_base_url)
+        return url.replace(
+            self._settings.oidc_public_base_url, self._settings.oidc_base_url
+        )
 
     def _require_endpoints(self) -> None:
         if not self._endpoints:
-            raise DiscoveryError("OidcClient not initialized — call initialize() first")
+            msg = "OidcClient not initialized — call initialize() first"
+            raise DiscoveryError(msg)
 
     def authorization_url(self, redirect_uri: str, state: str, scope: str) -> str:
         self._require_endpoints()
@@ -85,7 +90,8 @@ class OidcClient:
                 },
             )
         if resp.status_code != 200:  # noqa: PLR2004
-            raise OidcError(f"Token exchange failed: {resp.status_code}")
+            msg = f"Token exchange failed: {resp.status_code}"
+            raise OidcError(msg)
         return typing.cast(dict[str, typing.Any], resp.json())
 
     async def refresh_token(self, refresh_token: str) -> dict[str, typing.Any]:
@@ -101,7 +107,8 @@ class OidcClient:
                 },
             )
         if resp.status_code != 200:  # noqa: PLR2004
-            raise OidcError(f"Token refresh failed: {resp.status_code}")
+            msg = f"Token refresh failed: {resp.status_code}"
+            raise OidcError(msg)
         return typing.cast(dict[str, typing.Any], resp.json())
 
     async def revoke_token(self, token: str) -> None:
@@ -129,5 +136,6 @@ class OidcClient:
                 headers={"Authorization": f"Bearer {access_token}"},
             )
         if resp.status_code != 200:  # noqa: PLR2004
-            raise OidcError(f"Userinfo fetch failed: {resp.status_code}")
+            msg = f"Userinfo fetch failed: {resp.status_code}"
+            raise OidcError(msg)
         return typing.cast(dict[str, typing.Any], resp.json())

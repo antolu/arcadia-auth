@@ -33,9 +33,9 @@ async def test_initialize_caches_endpoints(
     discovery_data: dict,
 ) -> None:
     with respx.mock:
-        respx.get(f"{oidc_settings.oidc_base_url}/.well-known/openid-configuration").mock(
-            return_value=Response(200, json=discovery_data)
-        )
+        respx.get(
+            f"{oidc_settings.oidc_base_url}/.well-known/openid-configuration"
+        ).mock(return_value=Response(200, json=discovery_data))
         await client.initialize()
     assert client._endpoints["token_endpoint"] == discovery_data["token_endpoint"]  # noqa: SLF001
 
@@ -75,36 +75,48 @@ def test_authorization_url(initialized_client: OidcClient) -> None:
 
 
 @pytest.mark.asyncio
-async def test_fetch_tokens(initialized_client: OidcClient, oidc_settings: OidcSettings) -> None:
+async def test_fetch_tokens(
+    initialized_client: OidcClient, oidc_settings: OidcSettings
+) -> None:
     token_endpoint = initialized_client._endpoints["token_endpoint"].replace(  # noqa: SLF001
         oidc_settings.oidc_public_base_url, oidc_settings.oidc_base_url
     )
     with respx.mock:
         respx.post(token_endpoint).mock(
-            return_value=Response(200, json={
-                "access_token": "at",
-                "refresh_token": "rt",
-                "expires_in": 300,
-                "token_type": "Bearer",
-            })
+            return_value=Response(
+                200,
+                json={
+                    "access_token": "at",
+                    "refresh_token": "rt",
+                    "expires_in": 300,
+                    "token_type": "Bearer",
+                },
+            )
         )
-        result = await initialized_client.fetch_tokens("mycode", "http://localhost/callback")
+        result = await initialized_client.fetch_tokens(
+            "mycode", "http://localhost/callback"
+        )
     assert result["access_token"] == "at"
 
 
 @pytest.mark.asyncio
-async def test_refresh_token(initialized_client: OidcClient, oidc_settings: OidcSettings) -> None:
+async def test_refresh_token(
+    initialized_client: OidcClient, oidc_settings: OidcSettings
+) -> None:
     token_endpoint = initialized_client._endpoints["token_endpoint"].replace(  # noqa: SLF001
         oidc_settings.oidc_public_base_url, oidc_settings.oidc_base_url
     )
     with respx.mock:
         respx.post(token_endpoint).mock(
-            return_value=Response(200, json={
-                "access_token": "new_at",
-                "refresh_token": "new_rt",
-                "expires_in": 300,
-                "token_type": "Bearer",
-            })
+            return_value=Response(
+                200,
+                json={
+                    "access_token": "new_at",
+                    "refresh_token": "new_rt",
+                    "expires_in": 300,
+                    "token_type": "Bearer",
+                },
+            )
         )
         result = await initialized_client.refresh_token("old_rt")
     assert result["access_token"] == "new_at"
@@ -124,7 +136,9 @@ async def test_revoke_token_best_effort(
 
 
 @pytest.mark.asyncio
-async def test_fetch_userinfo(initialized_client: OidcClient, oidc_settings: OidcSettings) -> None:
+async def test_fetch_userinfo(
+    initialized_client: OidcClient, oidc_settings: OidcSettings
+) -> None:
     userinfo_endpoint = initialized_client._endpoints["userinfo_endpoint"].replace(  # noqa: SLF001
         oidc_settings.oidc_public_base_url, oidc_settings.oidc_base_url
     )
