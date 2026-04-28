@@ -19,6 +19,7 @@ def test_hierarchy() -> None:
 def test_exceptions_are_catchable_as_base() -> None:
     for cls in (DiscoveryError, JwksError, TokenExpiredError, TokenInvalidError):
         try:
-            raise cls("test")
+            msg = "test"
+            raise cls(msg)
         except OidcError:
             pass

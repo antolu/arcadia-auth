@@ -29,9 +29,9 @@ def test_defaults() -> None:
         oidc_client_secret="secret",
         oidc_redirect_uri="http://localhost/callback",
     )
-    assert s.oidc_jwks_cache_ttl == 3600
-    assert s.oidc_init_retries == 5
-    assert s.oidc_init_backoff == 2.0
+    assert s.oidc_jwks_cache_ttl == 3600  # noqa: PLR2004
+    assert s.oidc_init_retries == 5  # noqa: PLR2004
+    assert s.oidc_init_backoff == 2.0  # noqa: PLR2004
 
 
 def test_required_fields_missing() -> None:
