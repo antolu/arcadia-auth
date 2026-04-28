@@ -3,6 +3,7 @@ from __future__ import annotations
 import base64
 import time
 
+import jwt as pyjwt
 import pytest
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
@@ -29,14 +30,16 @@ def jwks_data(rsa_public_key: rsa.RSAPublicKey) -> dict:
         return base64.urlsafe_b64encode(n.to_bytes(length, "big")).rstrip(b"=").decode()
 
     return {
-        "keys": [{
-            "kty": "RSA",
-            "use": "sig",
-            "alg": "RS256",
-            "kid": "test-key-1",
-            "n": int_to_base64url(pub_numbers.n),
-            "e": int_to_base64url(pub_numbers.e),
-        }]
+        "keys": [
+            {
+                "kty": "RSA",
+                "use": "sig",
+                "alg": "RS256",
+                "kid": "test-key-1",
+                "n": int_to_base64url(pub_numbers.n),
+                "e": int_to_base64url(pub_numbers.e),
+            }
+        ]
     }
 
 
@@ -73,7 +76,7 @@ def make_token(
     iss: str = "http://localhost:9091/realms/arcadia",
     exp_offset: int = 3600,
 ) -> str:
-    import jwt as pyjwt
+
     priv_bytes = private_key.private_bytes(
         serialization.Encoding.PEM,
         serialization.PrivateFormat.TraditionalOpenSSL,
@@ -81,7 +84,13 @@ def make_token(
     )
     now = int(time.time())
     return pyjwt.encode(
-        {"sub": sub, "iss": iss, "exp": now + exp_offset, "iat": now, "jti": "test-jti"},
+        {
+            "sub": sub,
+            "iss": iss,
+            "exp": now + exp_offset,
+            "iat": now,
+            "jti": "test-jti",
+        },
         priv_bytes,
         algorithm="RS256",
     )
