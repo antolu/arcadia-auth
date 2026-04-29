@@ -34,6 +34,7 @@ def test_defaults() -> None:
     assert s.oidc_init_backoff == 2.0  # noqa: PLR2004
 
 
-def test_required_fields_missing() -> None:
-    with pytest.raises(ValidationError):
-        OidcSettings()  # type: ignore[call-arg]
+def test_empty_construction_succeeds() -> None:
+    s = OidcSettings()
+    assert s.oidc_endpoint == ""
+    assert s.oidc_realm == ""

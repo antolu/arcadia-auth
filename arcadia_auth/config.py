@@ -4,12 +4,12 @@ from pydantic_settings import BaseSettings
 
 
 class OidcSettings(BaseSettings):
-    oidc_endpoint: str
-    oidc_public_endpoint: str
-    oidc_realm: str
-    oidc_client_id: str
-    oidc_client_secret: str
-    oidc_redirect_uri: str
+    oidc_endpoint: str = ""
+    oidc_public_endpoint: str = ""
+    oidc_realm: str = ""
+    oidc_client_id: str = ""
+    oidc_client_secret: str = ""
+    oidc_redirect_uri: str = ""
     oidc_jwks_cache_ttl: int = 3600
     oidc_init_retries: int = 5
     oidc_init_backoff: float = 2.0
