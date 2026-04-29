@@ -48,12 +48,16 @@ class OidcClient:
                 msg = f"Discovery returned {resp.status_code}"
                 raise DiscoveryError(msg)
             data = resp.json()
-        self._endpoints = {
-            "authorization_endpoint": data["authorization_endpoint"],
-            "token_endpoint": data["token_endpoint"],
-            "revocation_endpoint": data.get("revocation_endpoint", ""),
-            "userinfo_endpoint": data["userinfo_endpoint"],
-        }
+        try:
+            self._endpoints = {
+                "authorization_endpoint": data["authorization_endpoint"],
+                "token_endpoint": data["token_endpoint"],
+                "revocation_endpoint": data.get("revocation_endpoint", ""),
+                "userinfo_endpoint": data["userinfo_endpoint"],
+            }
+        except KeyError as exc:
+            msg = f"Discovery doc missing required field: {exc}"
+            raise DiscoveryError(msg) from exc
 
     def _internal(self, url: str) -> str:
         return url.replace(

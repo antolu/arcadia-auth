@@ -127,11 +127,14 @@ async def test_revoke_token_best_effort(
     initialized_client: OidcClient,
     oidc_settings: OidcSettings,
 ) -> None:
+    import httpx as _httpx
+
     revoke_endpoint = initialized_client._endpoints["revocation_endpoint"].replace(  # noqa: SLF001
         oidc_settings.oidc_public_base_url, oidc_settings.oidc_base_url
     )
     with respx.mock:
-        respx.post(revoke_endpoint).mock(return_value=Response(503))
+        respx.post(revoke_endpoint).mock(side_effect=_httpx.ConnectError("down"))
+        # Must not raise even on network failure
         await initialized_client.revoke_token("some_token")
 
 

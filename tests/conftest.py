@@ -93,4 +93,5 @@ def make_token(
         },
         priv_bytes,
         algorithm="RS256",
+        headers={"kid": "test-key-1"},
     )

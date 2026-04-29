@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from arcadia_auth._version import version as __version__  # noqa: F401
 from arcadia_auth.client import OidcClient
 from arcadia_auth.config import OidcSettings
