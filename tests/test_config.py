@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-import pytest
-from pydantic import ValidationError
-
 from arcadia_auth.config import OidcSettings
 
 
@@ -36,5 +33,5 @@ def test_defaults() -> None:
 
 def test_empty_construction_succeeds() -> None:
     s = OidcSettings()
-    assert s.oidc_endpoint == ""
-    assert s.oidc_realm == ""
+    assert not s.oidc_endpoint
+    assert not s.oidc_realm

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import httpx as _httpx
 import pytest
 import respx
 from httpx import Response
@@ -127,8 +128,6 @@ async def test_revoke_token_best_effort(
     initialized_client: OidcClient,
     oidc_settings: OidcSettings,
 ) -> None:
-    import httpx as _httpx
-
     revoke_endpoint = initialized_client._endpoints["revocation_endpoint"].replace(  # noqa: SLF001
         oidc_settings.oidc_public_base_url, oidc_settings.oidc_base_url
     )
