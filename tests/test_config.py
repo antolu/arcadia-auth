@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import math
+
 from arcadia_auth.config import OidcSettings
 
 
@@ -28,7 +30,7 @@ def test_defaults() -> None:
     )
     assert s.oidc_jwks_cache_ttl == 3600  # noqa: PLR2004
     assert s.oidc_init_retries == 5  # noqa: PLR2004
-    assert s.oidc_init_backoff == 2.0  # noqa: PLR2004
+    assert math.isclose(s.oidc_init_backoff, 2.0)
 
 
 def test_empty_construction_succeeds() -> None:
